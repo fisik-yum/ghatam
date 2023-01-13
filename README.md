@@ -45,4 +45,4 @@ There are a few basic commands.
 
 `^info` lackluster details about the bot.
 
-Reply a message from a user by replying to that message. The message will DMed to the user.
+Reply to a message from a user by replying to that message. The message will DMed to the user.
