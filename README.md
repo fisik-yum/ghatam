@@ -33,13 +33,16 @@ And set up bindings.json like this
 ## Usage
 
 The bot NEEDS the owner's ID and bot token to function. A prefix is recommended.
-There are a few basic commands
+There are a few basic commands.
+
 `^bind <userID> <channelID>` binds a users messages to one channel that the bot has access to.
 
 `^listbinds`shows the current binds in place in the console. mainly for testing.
 
 `^reset <userID>` reset user's bind to default channel.
 
-`^savebinds`force save binds. kavaca saves binds automatically at shutdown.`^info` lackluster details about the bot.
+`^savebinds`force save binds. kavaca saves binds automatically at shutdown.
+
+`^info` lackluster details about the bot.
 
 Reply a message from a user by replying to that message. The message will DMed to the user.
