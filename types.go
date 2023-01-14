@@ -23,7 +23,6 @@ package main
 type owner struct {
 	Token          string `json:"token"`
 	ID             string `json:"id"`
-	Prefix         string `json:"prefix"`
 	DefaultChannel string `json:"defaultChannel"`
 }
 

@@ -21,22 +21,12 @@ package main
 //defines misc functions
 import (
 	"log"
-	"strings"
 )
 
 func check(err error) {
 	if err != nil {
 		log.Fatal(err)
 	}
-}
-
-func trim_index(in string, ind int) string {
-	defer func() {
-		if err := recover(); err != nil {
-			log.Println("panic:", err)
-		}
-	}()
-	return strings.ReplaceAll(strings.Split(in, " ")[ind], " ", "")
 }
 
 func create_bind(user string, channel string) {
