@@ -121,7 +121,7 @@ func main() {
 			mesAuthID := refMes.Embeds[0].Author.Name
 			fchannel, err := s.UserChannelCreate(mesAuthID)
 			check(err)
-			s.ChannelMessageSend(fchannel.ID, "Reply: "+m.Content)
+			s.ChannelMessageSend(fchannel.ID, m.Content)
 
 			check(err)
 		}
