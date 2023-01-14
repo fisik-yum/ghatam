@@ -34,7 +34,6 @@ import (
 var (
 	token          string
 	ownerID        string
-	prefix         string
 	defaultChannel string
 	bindings       []binding
 )
@@ -100,9 +99,9 @@ func main() {
 	}
 
 	log.Println("Adding forwarding Handler")
-	s.AddHandler(func(a *discordgo.Session, m *discordgo.MessageCreate) {
+	s.AddHandler(func(s *discordgo.Session, m *discordgo.MessageCreate) {
 		if (m.Author.ID != s.State.User.ID) && m.Author.ID != ownerID {
-			c, err := a.Channel(m.ChannelID)
+			c, err := s.Channel(m.ChannelID)
 			check(err)
 			if c.Type != discordgo.ChannelTypeDM { //only allow DM channels
 				return
@@ -111,8 +110,20 @@ func main() {
 				create_bind(m.Author.ID, defaultChannel)
 			}
 			cID := find_bind(m.Author.ID)
-			a.ChannelMessageSend(cID, (m.Author.ID + " **" + m.Author.Username + "#" + m.Author.Discriminator + ":** " + m.Content))
+			s.ChannelMessageSendEmbed(cID, &discordgo.MessageEmbed{Fields: []*discordgo.MessageEmbedField{{Name: (m.Author.Username + "#" + m.Author.Discriminator), Value: (m.Content), Inline: true}}, Author: &discordgo.MessageEmbedAuthor{Name: m.Author.ID}})
+
 			return
+		} else if (m.Author.ID == ownerID) && (m.Message.Type == discordgo.MessageTypeReply) && (m.ReferencedMessage.Author.ID == s.State.User.ID) {
+			refMes := m.ReferencedMessage
+			if len(refMes.Embeds) < 1 {
+				return
+			}
+			mesAuthID := refMes.Embeds[0].Author.Name
+			fchannel, err := s.UserChannelCreate(mesAuthID)
+			check(err)
+			s.ChannelMessageSend(fchannel.ID, "Reply: "+m.Content)
+
+			check(err)
 		}
 
 	})
@@ -125,22 +136,13 @@ func main() {
 	<-stop
 
 	log.Println("Removing commands...")
-	// // We need to fetch the commands, since deleting requires the command ID.
-	// // We are doing this from the returned commands on line 375, because using
-	// // this will delete all the commands, which might not be desirable, so we
-	// // are deleting only the commands that we added.
-	// registeredCommands, err := s.ApplicationCommands(s.State.User.ID, *GuildID)
-	// if err != nil {
-	// 	log.Fatalf("Could not fetch registered commands: %v", err)
-	// }
-
 	for _, v := range registeredCommands {
 		err := s.ApplicationCommandDelete(s.State.User.ID, "", v.ID)
 		if err != nil {
 			log.Panicf("Cannot delete '%v' command: %v", v.Name, err)
 		}
 	}
-	log.Println("Saving binding")
+	log.Println("Saving channel bindings")
 	save_bindings()
 
 	log.Println("Gracefully shutting down.")
